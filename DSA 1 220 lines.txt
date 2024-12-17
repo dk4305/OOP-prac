@@ -1,0 +1,514 @@
+DSA 1 220 lines
+#include <cstring>
+#include <iostream>
+using namespace std;
+struct student
+{
+    char student_name[20];
+    float SGPA;
+    int Roll_no;
+};
+int n;
+class student_data
+{
+    private :
+          struct student s1[15];        
+     public :
+         void viewdata()
+        {
+            cout<<"\n\n   Student Name        SGPA        Roll No.   \n-----------------------------------------------------\n";
+            for (int i = 0; i < n; i++)
+            {
+                cout<<"    "<<i+1<<". "<<s1 [i].student_name ;
+                cout<<"\t\t";
+                cout<<s1[i].SGPA ;
+                cout<<"\t\t";
+                cout<<s1[i].Roll_no<<endl;
+            }
+        }
+
+        void add()
+        {       cout<<"\n Enter no. of Student details to be added (max 15) : ";
+                cin>>n;
+ 		cout<<"\n Filling data such as Name,    SGPA,    Roll no.    			\n------------------------------------------------------";
+                for ( int i =0; i <n; i++)
+                {
+                    cout<<"\n\n# Details of Student no. "<<i+1<<" - \n\n  Enter Name of Student : ";
+                    cin>>s1[i].student_name;
+                    cout<<"\n  Enter Student SGPA : ";
+                    cin>>s1[i].SGPA;
+                    cout<<"\n  Enter Student Roll no. : ";
+                    cin>>s1[i].Roll_no;
+                }
+                cout<<"---------------- Addition Done Successfully ! ----------------";
+                student_data :: viewdata();
+        }
+        void search_sgpa(float r)  //linear search on SGPA
+        {
+            cout<<"\n\n< Searching in SGPA using Linear Search...>\n-----------------------------------------------";
+            int t = 0;
+            for (int i = 0; i < n; i++)
+            {
+                if(s1[i].SGPA == r)
+                {
+                    cout<<"\n\n#"<<t<<" Details of Student with SGPA "<<s1[i].SGPA;
+                    cout<<"\n\n Student     Name           SGPA           Roll_No.\n";  			  		 			    cout<<"    "<<i+1<<".       "<<s1[i].student_name;
+                    cout<<"    \t   "<<s1[i].SGPA<<"   \t    "<<s1[i].Roll_no;
+                    cout<<"\n--------------------------------------------------------------";
+                    t++;
+                    continue;
+                }
+            }
+            if(t == 0)
+            {
+                cout<<"\n Student '"<<r<<"' not found or Input correct SGPA";
+            }
+        }
+
+       
+        void sort_names()  //insertion sort for sorting names
+        {
+            for (int k=n-1; k>0; k--)
+            {  
+                struct student temp = s1[k];
+                int j = k-1;
+                while (j >= 0 && strcmp(temp.student_name, s1[j].student_name) < 0)  
+                {
+                    s1[j+1] = s1[j];
+                    j = j-1;
+                }
+                s1[j+1] = temp;
+            }
+        }
+
+   void sort_SGPA(int l, int k)  //sorting SGPA using quick sorting
+        {
+            int r = k-1;
+            if (l>=r) return;
+            int i=l;
+            int j=r+1;
+            struct student prec;
+            int p = s1[l].SGPA; //Select pivot element
+            prec = s1[l]; //temporarily storing pivot record prec
+            while(1)
+            {
+                do{ i++; } while (s1[i].SGPA < p  && i <= r);
+                do{ j--; } while (s1[j].SGPA > p && j >= l);
+                if(i >= j) break;
+                struct student temp;
+                temp = s1[j];
+                s1[j] = s1[i];
+                s1[i] = temp;
+            }
+            s1[l] = s1[j];
+            s1[j] = prec;
+            sort_SGPA(l,j-1); //left list
+            sort_SGPA(j+1,r); //right list          
+        }
+              
+ void sort_RollNo()  //sorting roll no. in ascending order using bubble sort
+        {
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n-1-i; j++)
+                {
+                    if((s1[j].Roll_no) > (s1[j+1].Roll_no)) //Swapping
+                    {
+                        struct student temp;
+                        temp = s1[j];
+                        s1[j] = s1[j+1];
+                        s1[j+1] = temp;
+                    }
+                }
+            }
+            student_data :: viewdata();
+        }
+
+  void search_name()
+        {
+            cout<<"\n Enter student name to be searched : ";
+            char search[10];
+            cin>>search;
+            cout<<"\n< Searching name using Binary Search...>";
+            int lower = 0, upper, mid;
+            upper = n - 1;
+            mid = (lower + upper)/2;
+            student_data :: sort_names();
+            while (lower <= upper)
+            {
+                if(strcmp(s1[mid].student_name, search)<0)
+                {
+                    lower = mid + 1;
+                }
+                else if(strcmp(s1[mid].student_name, search)==0)
+                {
+                    cout<<"\n\n# Details of Student with name "<<s1[mid].student_name<<" -";
+                    cout<<"\n\n Student        Name         SGPA        Roll\n    No.                                           No.\n--------------------------------------------------------------\n";
+                    cout<<"    1.        "<<s1[mid].student_name;
+                    cout<<"   \t  "<<s1[mid].SGPA<<"   \t  "<<s1[mid].Roll_no;
+                    cout<<"\n--------------------------------------------------------------";
+                    break;
+                }
+                else
+                {
+                    upper = mid - 1;
+                    mid = (lower + upper)/2;
+                }
+            }
+            if(lower > upper)
+            {
+                cout<<"\n Student '"<<search<<"' details not found or Input correct name";
+            }
+        }
+};
+
+
+int main()
+{
+    student_data std;
+    float r;
+    cout<<"--------------------------------------------------------------------\n\t\t----- SE IT Student Database -----\n--------------------------------------------------------------------\n";
+    char stopApp;
+    stopApp = 'Y';
+    while(stopApp == 'Y')
+    {
+        cout<<"\n\nSelect action from following : \n";
+        cout<<"\n1.ADD RECORDS\t2.SEARCH SGPA\t3.SORT NAME \t4.SORT SGPA(Toppers)\t5.SORT ROLL NO.\t 6. SEARCH NAME\t7. EXIT\n";
+        cout<<"Enter choice (1/2/3/4/5/6/7): ";
+        int choice;
+        cin>>choice;
+        switch(choice)
+        {
+            case 1:
+                std.add();
+                break;
+            case 2:
+                cout<<"\n Enter Student SGPA to be searched : ";
+                cin>>r;
+                std.search_sgpa(r);
+                break;
+            case 3:
+                cout<<"\n< Sorting name alphabetically using Insertion Sort...>";
+                std.sort_names();
+                std.viewdata();
+                break;
+            case 4:
+                cout<<"\n< Sorting top 10 SGPA using Quick Sort...>";
+                std.sort_SGPA(0, 10);
+                std.viewdata();
+                break;
+            case 5:
+                cout<<"\n< Sorting Roll No. wise using Bubble Sort...>";
+                std.sort_RollNo();
+                break;
+            case 6:
+                std.search_name();
+                break;
+            case 7:
+                cout<<" >Exited successful<\n --| END OF CODE |--";
+                return 0;
+            default :
+                cout<<"\n Invalid choice !";
+       }
+        cout<<"\n\nDo you want to continue (Y/N) ? : ";
+        cin>>stopApp;
+        if (stopApp == 'N' | 'n')
+        {
+            cout<<" ----------------| END OF CODE |----------------\n";
+        }
+    }
+    return 0;
+}
+
+
+OUTPU:
+--------------------------------------------------------------------
+                ----- SE IT Student Database -----
+--------------------------------------------------------------------
+
+
+Select action from following :
+
+1.ADD RECORDS   2.SEARCH SGPA   3.SORT NAME     4.SORT SGPA(Toppers)    5.SORT ROLL NO.  6. SEARCH NAME 7. EXIT
+Enter choice (1/2/3/4/5/6/7): 1
+
+ Enter no. of Student details to be added (max 15) : 15
+
+ Filling data such as Name,    SGPA,    Roll no.
+------------------------------------------------------
+
+# Details of Student no. 1 -
+
+  Enter Name of Student : PREM
+
+  Enter Student SGPA : 6.66
+
+  Enter Student Roll no. : 6
+
+
+# Details of Student no. 2 -
+
+  Enter Name of Student : PRAJANYA
+
+  Enter Student SGPA : 7.88
+
+  Enter Student Roll no. : 7
+
+
+# Details of Student no. 3 -
+
+  Enter Name of Student : Prathamesh
+
+  Enter Student SGPA : 8.36
+
+  Enter Student Roll no. : 14
+
+
+# Details of Student no. 4 -
+
+  Enter Name of Student : GAURAV
+
+  Enter Student SGPA : 5.21
+
+  Enter Student Roll no. : 16
+
+
+# Details of Student no. 5 -
+
+  Enter Name of Student : TEJAS
+
+  Enter Student SGPA : 7.66
+
+  Enter Student Roll no. : 13
+
+
+# Details of Student no. 6 -
+
+  Enter Name of Student : AADESH
+
+  Enter Student SGPA : 5.58
+
+  Enter Student Roll no. : 46
+
+
+# Details of Student no. 7 -
+
+  Enter Name of Student : ADITYA
+
+  Enter Student SGPA : 9.87
+
+  Enter Student Roll no. : 39
+
+
+# Details of Student no. 8 -
+
+  Enter Name of Student : SWAPNIL
+
+  Enter Student SGPA : 8.12
+
+  Enter Student Roll no. : 42
+
+
+# Details of Student no. 9 -
+
+  Enter Name of Student : PRANAV
+
+  Enter Student SGPA : 6.23
+
+  Enter Student Roll no. : 49
+
+
+# Details of Student no. 10 -
+
+  Enter Name of Student : OM
+
+  Enter Student SGPA : 5.39
+
+  Enter Student Roll no. : 58
+
+
+# Details of Student no. 11 -
+
+  Enter Name of Student : ADESH
+
+  Enter Student SGPA : 6.77
+
+  Enter Student Roll no. : 30
+
+
+# Details of Student no. 12 -
+
+  Enter Name of Student : ANAGH
+
+  Enter Student SGPA : 6.78
+
+  Enter Student Roll no. : 63
+
+
+# Details of Student no. 13 -
+
+  Enter Name of Student : RITESH
+
+  Enter Student SGPA : 7.39
+
+  Enter Student Roll no. : 64
+
+
+# Details of Student no. 14 -
+
+  Enter Name of Student : HARSH
+
+  Enter Student SGPA : 7.28
+
+  Enter Student Roll no. : 68
+
+
+# Details of Student no. 15 -
+
+  Enter Name of Student : DHYEY
+
+  Enter Student SGPA : 6.17
+
+  Enter Student Roll no. : 24
+---------------- Addition Done Successfully ! ----------------
+
+   Student Name        SGPA        Roll No.
+-----------------------------------------------------
+    1. PREM             6.66            6
+    2. PRAJANYA         7.88            7
+    3. Prathamesh               8.36            14
+    4. GAURAV           5.21            16
+    5. TEJAS            7.66            13
+    6. AADESH           5.58            46
+    7. ADITYA           9.87            39
+    8. SWAPNIL          8.12            42
+    9. PRANAV           6.23            49
+    10. OM              5.39            58
+    11. ADESH           6.77            30
+    12. ANAGH           6.78            63
+    13. RITESH          7.39            64
+    14. HARSH           7.28            68
+    15. DHYEY           6.17            24
+
+
+Do you want to continue (Y/N) ? : Y
+ ----------------| END OF CODE |----------------
+
+
+Select action from following :
+
+1.ADD RECORDS   2.SEARCH SGPA   3.SORT NAME     4.SORT SGPA(Toppers)    5.SORT ROLL NO.  6. SEARCH NAME 7. EXIT
+Enter choice (1/2/3/4/5/6/7): 2
+
+ Enter Student SGPA to be searched : 8.12
+
+
+< Searching in SGPA using Linear Search...>
+-----------------------------------------------
+
+#0 Details of Student with SGPA 8.12
+
+ Student     Name           SGPA           Roll_No.
+    8.       SWAPNIL               8.12             42
+--------------------------------------------------------------
+
+Do you want to continue (Y/N) ? : Y
+ ----------------| END OF CODE |----------------
+
+
+Select action from following :
+
+1.ADD RECORDS   2.SEARCH SGPA   3.SORT NAME     4.SORT SGPA(Toppers)    5.SORT ROLL NO.  6. SEARCH NAME 7. EXIT
+Enter choice (1/2/3/4/5/6/7): 3
+
+< Sorting name alphabetically using Insertion Sort...>
+
+   Student Name        SGPA        Roll No.
+-----------------------------------------------------
+    1. AADESH           5.58            46
+    2. GAURAV           5.21            16
+    3. PRAJANYA         7.88            7
+    4. PREM             6.66            6
+    5. Prathamesh               8.36            14
+    6. TEJAS            7.66            13
+    7. ADESH            6.77            30
+    8. ADITYA           9.87            39
+    9. PRANAV           6.23            49
+    10. SWAPNIL         8.12            42
+    11. OM              5.39            58
+    12. ANAGH           6.78            63
+    13. DHYEY           6.17            24
+    14. RITESH          7.39            64
+    15. HARSH           7.28            68
+
+
+Do you want to continue (Y/N) ? : Y
+ ----------------| END OF CODE |----------------
+
+
+Select action from following :
+
+1.ADD RECORDS   2.SEARCH SGPA   3.SORT NAME     4.SORT SGPA(Toppers)    5.SORT ROLL NO.  6. SEARCH NAME 7. EXIT
+Enter choice (1/2/3/4/5/6/7): 4
+
+< Sorting top 10 SGPA using Quick Sort...>
+
+   Student Name        SGPA        Roll No.
+-----------------------------------------------------
+    1.          7.34271e+15             1090644869
+    2. GAURAV           5.21            16
+    3. PRAJANYA         7.88            7
+    4. PREM             6.66            6
+    5. Prathamesh               8.36            14
+    6. TEJAS            7.66            13
+    7. ADESH            6.77            30
+    8. ADITYA           9.87            39
+    9. PRANAV           6.23            49
+    10. SWAPNIL         8.12            42
+    11. OM              5.39            58
+    12. ANAGH           6.78            63
+    13. DHYEY           6.17            24
+    14. RITESH          7.39            64
+    15. HARSH           7.28            68
+
+
+Do you want to continue (Y/N) ? : Y
+ ----------------| END OF CODE |----------------
+
+
+Select action from following :
+
+1.ADD RECORDS   2.SEARCH SGPA   3.SORT NAME     4.SORT SGPA(Toppers)    5.SORT ROLL NO.  6. SEARCH NAME 7. EXIT
+Enter choice (1/2/3/4/5/6/7): 5
+
+< Sorting Roll No. wise using Bubble Sort...>
+
+   Student Name        SGPA        Roll No.
+-----------------------------------------------------
+    1. PREM             6.66            6
+    2. PRAJANYA         7.88            7
+    3. TEJAS            7.66            13
+    4. Prathamesh               8.36            14
+    5. GAURAV           5.21            16
+    6. DHYEY            6.17            24
+    7. ADESH            6.77            30
+    8. ADITYA           9.87            39
+    9. SWAPNIL          8.12            42
+    10. PRANAV          6.23            49
+    11. OM              5.39            58
+    12. ANAGH           6.78            63
+    13. RITESH          7.39            64
+    14. HARSH           7.28            68
+    15.                 7.34271e+15             1090644869
+
+
+Do you want to continue (Y/N) ? : Y
+ ----------------| END OF CODE |----------------
+
+
+Select action from following :
+
+1.ADD RECORDS   2.SEARCH SGPA   3.SORT NAME     4.SORT SGPA(Toppers)    5.SORT ROLL NO.  6. SEARCH NAME 7. EXIT
+Enter choice (1/2/3/4/5/6/7): 7
+ >Exited successful<
+ --| END OF CODE |--
